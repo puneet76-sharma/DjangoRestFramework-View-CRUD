@@ -7,3 +7,4 @@ pip install virtualenv
 virtualenv venv
 source venv/bin/activate
 pip install django gunicorn
+pip install -r requirements.txt
