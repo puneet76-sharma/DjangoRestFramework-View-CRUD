@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 cd /home/ubuntu/project
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 deactivate
 
