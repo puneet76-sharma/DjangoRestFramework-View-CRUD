@@ -1,5 +1,6 @@
 #!/bin/bash 
 
+pip3 install -r requirements.txt
 deactivate
 
 sudo systemctl start gunicorn.socket
