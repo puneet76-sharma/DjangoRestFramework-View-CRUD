@@ -1,5 +1,8 @@
 #!/bin/bash 
 
+cd /home/ubuntu/project
+pip install -r requirements.txt
+
 deactivate
 
 echo "[Unit]
