@@ -1,8 +1,5 @@
 #!/bin/bash 
 
-cd /home/ubuntu/project
-pip install -r requirements.txt
-
 deactivate
 
 echo "[Unit]
@@ -20,8 +17,8 @@ After=network.target
 [Service]
 User=ubuntu
 Group=www-data
-WorkingDirectory=/home/ubuntu/project
-ExecStart=/home/ubuntu/venv/bin/gunicorn \
+WorkingDirectory=/home/ubuntu/projectdir/projectdir
+ExecStart=/home/ubuntu/env/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
           --bind unix:/run/gunicorn.sock \
@@ -39,7 +36,7 @@ echo "server {
     server_name 18.234.214.28;
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
-        root /home/ubuntu/project;
+        root /home/ubuntu/projectdir;
     }
     location / {
         include proxy_params;
