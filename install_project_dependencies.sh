@@ -1,56 +1,27 @@
 #!/bin/bash 
 
+cd /home/ubuntu
+
+source venv/bin/activate
+
 cd /home/ubuntu/project
 pip install -r requirements.txt
-deactivate
 
-echo "[Unit]
-Description=gunicorn socket
-[Socket]
-ListenStream=/run/gunicorn.sock
-[Install]
-WantedBy=sockets.target
-" > /etc/systemd/system/gunicorn.socket
+sudo fuser -k 8000/tcp
 
-echo " [Unit]
-Description=gunicorn daemon
-Requires=gunicorn.socket
-After=network.target
-[Service]
-User=ubuntu
-Group=www-data
-WorkingDirectory=/home/ubuntu/project
-ExecStart=/home/ubuntu/venv/bin/gunicorn \
-          --access-logfile - \
-          --workers 3 \
-          --bind unix:/run/gunicorn.sock \
-          first.wsgi:application
-[Install]
-WantedBy=multi-user.target"  >  /etc/systemd/system/gunicorn.service
+gunicorn --bind 0.0.0.0:8000 first.wsgi &>/dev/null & 
 
-sudo systemctl start gunicorn.socket
+# mv /home/ubuntu/gunicorn.socket /etc/systemd/system/
+# mv /home/ubuntu/gunicorn.service /etc/systemd/system/
 
-sudo systemctl enable gunicorn.socket
+# sudo systemctl start gunicorn.socket
+# sudo systemctl enable gunicorn.socket
 
+mv /home/ubuntu/NGINX /etc/nginx/sites-available 
 
-echo "server {
-    listen 80;
-    server_name 18.234.214.28;
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location /static/ {
-        root /home/ubuntu/project;
-    }
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:/run/gunicorn.sock;
-    }
-}" > /etc/nginx/sites-available/textutils
+sudo ln -s /etc/nginx/sites-available/NGINX /etc/nginx/sites-enabled/
 
-
-sudo ln -s /etc/nginx/sites-available/textutils  /etc/nginx/sites-enabled/
-
-sudo rm /etc/nginx/sites-enabled/default
-
+sudo rm /etc/nginx//sites-enabled/default
 
 sudo systemctl restart nginx
 sudo systemctl restart gunicorn
