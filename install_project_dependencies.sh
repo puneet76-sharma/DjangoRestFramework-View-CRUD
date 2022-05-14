@@ -1,56 +1,19 @@
 #!/bin/bash 
 
-cd /home/ubuntu/project
+cd /home/ubuntu
+
+source venv/bin/activate
 pip install -r requirements.txt
+sudo fuser -k 8000/tcp
+
+gunicorn --bind 0.0.0.0:8000 first.wsgi &>/dev/null & 
 
 
-echo "[Unit]
-Description=gunicorn socket
-[Socket]
-ListenStream=/run/gunicorn.sock
-[Install]
-WantedBy=sockets.target
-" > /etc/systemd/system/gunicorn.socket
+mv /home/ubuntu/NGINX /etc/nginx/sites-available 
 
-echo " [Unit]
-Description=gunicorn daemon
-Requires=gunicorn.socket
-After=network.target
-[Service]
-User=ubuntu
-Group=www-data
-WorkingDirectory=/home/ubuntu/project
-ExecStart=/home/ubuntu/venv/bin/gunicorn \
-          --access-logfile - \
-          --workers 3 \
-          --bind unix:/run/gunicorn.sock \
-          textutils.wsgi:application
-[Install]
-WantedBy=multi-user.target"  >  /etc/systemd/system/gunicorn.service
+sudo ln -s /etc/nginx/sites-available/NGINX /etc/nginx/sites-enabled/
 
-sudo systemctl start gunicorn.socket
-
-sudo systemctl enable gunicorn.socket
-
-
-echo "server {
-    listen 80;
-    server_name 34.205.139.213;
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location /static/ {
-        root /home/ubuntu/project;
-    }
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:/run/gunicorn.sock;
-    }
-}" > /etc/nginx/sites-available/textutils
-
-
-sudo ln -s /etc/nginx/sites-available/textutils  /etc/nginx/sites-enabled/
-
-sudo rm /etc/nginx/sites-enabled/default
-
+sudo rm /etc/nginx//sites-enabled/default
 
 sudo systemctl restart nginx
 sudo systemctl restart gunicorn
