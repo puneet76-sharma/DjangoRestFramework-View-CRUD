@@ -5,8 +5,8 @@ phases:
       python: 3.9
   pre_build:
     commands:
-      - apt-get install python3.10
-      - pip install -r requriments.txt
+      - apt-get install python3.9
+      - pip install -r requirements.txt
      
   build:
     commands:
