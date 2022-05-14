@@ -20,7 +20,7 @@ After=network.target
 [Service]
 User=ubuntu
 Group=www-data
-WorkingDirectory=/home/ubuntu
+WorkingDirectory=/home/ubuntu/project
 ExecStart=/home/ubuntu/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
@@ -36,10 +36,10 @@ sudo systemctl enable gunicorn.socket
 
 echo "server {
     listen 80;
-    server_name puneet.co.vu;
+    server_name 34.205.139.213;
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
-        root /home/ubuntu/;
+        root /home/ubuntu/project;
     }
     location / {
         include proxy_params;
