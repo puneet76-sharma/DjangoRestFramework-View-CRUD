@@ -3,6 +3,7 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/project
+    overwrite: true
 hooks:
   BeforeInstall: 
     - location: install_dependencies.sh
