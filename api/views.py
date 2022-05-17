@@ -74,7 +74,7 @@ class StudentAPI(View):
         else:
             stu = Student.objects.all()
             serializer = StudentListSerializer(stu, many=True)
-            return JsonResponse({"result_______new!!!!!!!!!!!!!!!!!!!":serializer.data})
+            return JsonResponse({"result":serializer.data})
 
 
     def delete(self, request, *args, **kwargs):
